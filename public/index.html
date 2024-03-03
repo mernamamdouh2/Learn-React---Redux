@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/font-awesome.min.css"
+    />
+    <title>React App</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
+
+
+<!-- 
+  == HOOKS ==
+  ==============================
+
+  useState -> بتخليك تخزن قيم صغيرة
+  ----------------------------
+  const [value,setValue] = useState(initianlValue)  //او اى شي object او arr القيمةالمبدئية بتكون رقم او كلمةاو 
+  make component rerender
+  تعرف فى اعلى سطر  top level
+  لا تعرف داخل اى {} if , switch , for 
+  ===============================================================================================================================
+
+  useEffect -> بتنفذ الكود لما يحصل حاجة معينة
+  -----------------------------------------------
+  useEffect(function, [dependency])
+  run when component run first time [] , Or dependency element change [dependency]
+    -//Every Render
+    useEffect(()=>{
+      console.log("hello from useEffect for the first time (when component gets mounted) without make rerender for component")
+    }, [])
+
+    -//onMount
+    useEffect(()=>{
+      console.log("hello from useEffect for everytime component rerender")
+    })
+
+    -//Condition Based
+    useEffect(()=>{
+      console.log("hello from useEffect for everytime condition is changed")
+    }, [condition])  // ممكن يكون اكتر من شرط وبيحصل التاثير لما اى شرط يتغير
+    
+    -//Condition Based with * clean up *
+    useEffect(()=>{
+      console.log("hello from useEffect for everytime condition is changed")
+
+      return()=>{
+        console.log("use this return as a 'clean up tool' (this runs before the actual code)")
+      }
+    }, [condition])
+  ==============================================================================================================================
+
+  useRef -> بتشاور على اى عنصر على الشاشة
+  -------------------------------------------
+  const value = useRef(initianlValue)
+  <input ref={value} />
+  const getValue= value.current.value
+    بتنفذ الكود لما اشاور على الحدث الىعايزاه يحصل (بيتنفذ فى الاخر لما يخلص خالص)
+  ==========================================================================================
+  
+  useContext -> بتخليك تخزن بيانات وتعرف توصلها من اى مكان فى الابلكيشن
+  ----------------------------------------------------------------------------
+  const value = useContext(ContextApi)
+  useContext: accept a context object (the value returned from React.createContext)
+  and returns the context value for that context.
+  ContextApi: is a react structure that enables you to exchange unique details 
+  and assists in solving prop-drilling from all levels of your application
+  ==========================================================================================
+
+  useMemo -> بتخزن بيانات وبتتنفذ بشروط معينة
+  -----------------------------------------------
+  const value = useMemo(function(), [a,b])
+  to store values and use it , execute function when another value change
+  ========================================================================================
+  
+  useReducer -> بتخليك تخزن قيم كبيرة 
+  --------------------------------------
+  const [state,dispatch] = useReducer(reducer,initianlValue)  //او اى شي object او arr القيمةالمبدئية بتكون رقم او كلمةاو 
+  used for complex state manipulations and state transitions.
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////// REDUX ////////////////////////////////
+
+/// 1- Create Store to store data in it then  pass it to any Reducer 
+  const store = redux.createStore(anyReducer)
+/// 2- Create Any Reducer (State, Action): A pure function that takes the previous state and an action, 
+  const anyReducer = (state, action)=>{
+    ///code
+  }
+/// 3-  Make Provider wrapping for <App/> component : This will provide the store to every child components inside App
+  <Provider store={store}>
+    <App/>
+  </Provider>
+/// 4- From any Components (to access state from the store's data), import {useSelector, useDispatch}.
+  const state = useSelector((state)=> state) 
+  const dispatch = useDispatch()   // to fire and change state from any component and reducer
+
+  ////////////////////////////////////////////////////////////////////////////
+  
+/// 3- Connect Component To The Store : It’s a High Order Function That Takes In Two Arguments –  
+  •The Component You Want To Connect And •An Object Containing Mapping Between State And Props Of This Component
+  • mapStateToProps: This argument is a function that receives the current Redux store’s state as its first parameter.  
+  -A component and a reference to the store. This HOF will wrap our component with  a special Provider  component which provides access to the store via props.
+  -A component and either a store or a function that returns a store. This lets you connect any component to the Redux store.
+  • mapStateToProps: This argument is a function that takes the current Redux store’s state and returns an object to be passed as props.
+  •The Component You Want To Connect And •An Object Containing Mappings Between The  State Slice And Props For That Component.
+  •The Component You Want To Connect And •An Object Containing Mapping Between The State From The Store And Props For Your Component.
+  • mapStateToProps – This Argument Is Optional And It Will Return An Object Containing Whatever You Want From The State.
+  • mapStateToProps: This argument is a function that gets the current state tree and returns whatever slice of that state tree this component needs to access as its props. If you return nothing
+  •The Component You Want To Connect And •An Object Containing Mappings Between The Props Of The  
+  Component And State From The Store.
+  const connectedComponent = redux.connect(mapStateToProps, mapDispatchToProps)(MyComponent);
+  mapStateToProps: Is A Function That Returns An Object Of Values From The Store Sate That You Need For Your Component.
+
+  mapStateToProps:(state)=>{} : Is Used To Map The Data From The Store To The Props Of Your Component.
+  mapDispatchToProps:(dispatch)=>{} : Is Used To Bind An Action Creator To A Dispatch Function And Pass It As A Prop.
+  mapDispatchToProps:(dispatch)=>{} : Is Used To Map Dispatched Actions To The Props Of Your Component.
+
+/// 4- Dispatching An Action : Whenever You Need To Update The State Inside The Store, You Can Use  
+  dispatch() Function Provided By Redux.
+
+/// 5- Redux Thunk Middleware : Allows you to write “Async” Actions With Ease. Async Actions Are Those    
+  Which Return Promises As A Result Of Their Execution. This Helps Us Handle API Calls More Easily.
+
+/// 6- Redux DevTools Extension : It’s A Chrome Extension That Shows You Every Single Action Being    
+  Dispatched Alongside Its Corresponding Payload. This Helps Developers Debug What’s Happening In    
+  Their Applications.
+
+/// 7- Redux Logger : Another Handy Tool For Debugging Purposes. It Logs Every Single Action Being        
+  Dispatched To The Console So You Can See Exactly What’s Going  On In Your Application At Any Given Time.
+
+/// 8- ImmutableJS : It Helps Manage Updates To JavaScript Objects In A Predictable Way. If You Find        
+  Yourself Frequently Writing Code Like this:
+
+  return {...state, counter: state.counter + 1}
+  
+-->   
